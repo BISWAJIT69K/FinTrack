@@ -1,0 +1,143 @@
+
+{% extends 'base.html' %}
+{% block title %}Profile - Finance Tracker{% endblock %}
+
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    .profile-modern {
+        font-family: 'Montserrat', sans-serif;
+        background: #f9fafb;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(59,130,246,0.08);
+        padding: 2.5rem 2rem;
+        max-width: 650px;
+        margin: 2rem auto;
+    }
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 2.5rem;
+        font-weight: 700;
+        box-shadow: 0 4px 16px rgba(59,130,246,0.12);
+    }
+    .profile-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 0.25rem;
+    }
+    .profile-subtitle {
+        color: #6366f1;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .profile-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #6366f1;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        padding: 0.75rem;
+        font-size: 1rem;
+        font-family: 'Montserrat', sans-serif;
+        background: #fff;
+        color: #374151;
+        box-shadow: 0 2px 8px rgba(59,130,246,0.04);
+    }
+    .btn-primary {
+        background: linear-gradient(90deg, #6366f1 60%, #3b82f6 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+        transition: background 0.2s;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #3b82f6 60%, #6366f1 100%);
+    }
+    .btn-outline {
+        border: 2px solid #6366f1;
+        color: #6366f1;
+        background: #fff;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-outline:hover {
+        background: #6366f1;
+        color: #fff;
+    }
+</style>
+
+<div class="profile-modern">
+    <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <div>
+            <div class="profile-title">User Profile</div>
+            <div class="profile-subtitle">Manage your account details</div>
+        </div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="profile-form">
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                {{ form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                {{ form.last_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                {{ form.phone }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
+                {{ form.date_of_birth }}
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

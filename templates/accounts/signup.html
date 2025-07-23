@@ -1,0 +1,282 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - FinTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .brand-icon {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            transition: color 0.3s ease;
+        }
+
+        .form-control:focus + .input-icon {
+            color: #6366f1;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .auth-link {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .auth-link a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .auth-link a:hover {
+            color: #8b5cf6;
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .auth-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="brand-section">
+            <div class="brand-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1 class="auth-title">Join FinTrack</h1>
+            <p class="auth-subtitle">Create your account to start managing finances</p>
+        </div>
+
+        {% if form.errors %}
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                Please fix the errors below and try again.
+            </div>
+        {% endif %}
+
+        <form method="post" id="signupForm">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" name="first_name" class="form-control" id="{{ form.first_name.id_for_label }}" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" name="last_name" class="form-control" id="{{ form.last_name.id_for_label }}" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                <div class="input-wrapper">
+                    <input type="text" name="username" class="form-control" id="{{ form.username.id_for_label }}" required>
+                    <i class="fas fa-at input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                <div class="input-wrapper">
+                    <input type="email" name="email" class="form-control" id="{{ form.email.id_for_label }}" required>
+                    <i class="fas fa-envelope input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password1" class="form-control" id="{{ form.password1.id_for_label }}" required>
+                    <i class="fas fa-lock input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password2" class="form-control" id="{{ form.password2.id_for_label }}" required>
+                    <i class="fas fa-lock input-icon"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Create Account
+            </button>
+        </form>
+
+        <div class="auth-link">
+            Already have an account? <a href="{% url 'login' %}">Sign in here</a>
+        </div>
+    </div>
+</body>
+</html>

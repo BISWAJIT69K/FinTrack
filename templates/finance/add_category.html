@@ -1,0 +1,24 @@
+
+{% extends 'base.html' %}
+{% block title %}Add {{ category_type|title }} Category - Finance Tracker{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <div class="card" style="max-width: 400px; margin: 0 auto;">
+        <div class="card-header">
+            <h1 class="card-title">Add {{ category_type|title }} Category</h1>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}" class="form-label">Category Name</label>
+                {{ form.name }}
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Add Category</button>
+                <a href="{% url 'add_'|add:category_type %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

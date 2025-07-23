@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FinTrack - Your Personal Finance Manager{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --primary-color: #818cf8;
+            --secondary-color: #1f2937;
+            --accent-color: #10b981;
+            --danger-color: #f87171;
+            --warning-color: #fbbf24;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+            --success-color: #34d399;
+        }
+
+        [data-theme="dark"] body {
+            background-color: #111827;
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .navbar {
+            background: #1f2937;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .card,
+        [data-theme="dark"] .stat-card,
+        [data-theme="dark"] .chart-container {
+            background: #1f2937;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #e5e7eb;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary-color);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        /* Enhanced navigation */
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* Mobile menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--secondary-color, white);
+                border-top: 1px solid var(--border-color);
+                flex-direction: column;
+                padding: 1rem 0;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    {% if user.is_authenticated %}
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{% url 'dashboard' %}" class="nav-brand">
+                    <div class="nav-brand-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    FinTrack
+                </a>
+
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="{% url 'dashboard' %}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="{% url 'income_list' %}" class="nav-link"><i class="fas fa-plus-circle"></i> Income</a></li>
+                    <li><a href="{% url 'expense_list' %}" class="nav-link"><i class="fas fa-minus-circle"></i> Expenses</a></li>
+                    <li><a href="{% url 'profile' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
+                    <li>
+                        <div class="theme-toggle">
+                            <i class="fas fa-sun"></i>
+                            <div class="toggle-switch" onclick="toggleTheme()">
+                                <div class="toggle-slider">
+                                    <i class="fas fa-sun" id="themeIcon"></i>
+                                </div>
+                            </div>
+                            <i class="fas fa-moon"></i>
+                        </div>
+                    </li>
+                    <li><a href="{% url 'logout' %}" onclick="return confirm('Are you sure you want to logout?')" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main>
+        {% if messages %}
+        <div class="container">
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script>
+        // Theme management
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.querySelector('.toggle-switch');
+            const icon = document.getElementById('themeIcon');
+            const currentTheme = body.getAttribute('data-theme');
+
+            if (currentTheme === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                toggle.classList.add('active');
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                toggle.classList.remove('active');
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const toggle = document.querySelector('.toggle-switch');
+            const icon = document.getElementById('themeIcon');
+
+            body.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                toggle?.classList.add('active');
+                if (icon) icon.className = 'fas fa-moon';
+            }
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Auto-hide messages
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.alert');
+            messages.forEach(message => {
+                message.style.animation = 'slideUp 0.3s ease-out forwards';
+                setTimeout(() => message.remove(), 300);
+            });
+        }, 5000);
+    </script>
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

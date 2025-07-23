@@ -1,0 +1,65 @@
+
+{% extends 'base.html' %}
+{% block title %}{{ transaction_type|title }} - Finance Tracker{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <!-- Header -->
+    <div class="d-flex justify-between align-center mb-2">
+        <h1>{{ transaction_type|title }} Transactions</h1>
+        <a href="{% url 'add_'|add:transaction_type %}" class="btn {% if transaction_type == 'income' %}btn-success{% else %}btn-danger{% endif %}">
+            + Add {{ transaction_type|title }}
+        </a>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="filters">
+        <div class="filter-group">
+            <a href="?filter=all" class="btn {% if filter_type == 'all' %}btn-primary{% else %}btn-outline{% endif %}">All Time</a>
+            <a href="?filter=daily" class="btn {% if filter_type == 'daily' %}btn-primary{% else %}btn-outline{% endif %}">Today</a>
+            <a href="?filter=monthly" class="btn {% if filter_type == 'monthly' %}btn-primary{% else %}btn-outline{% endif %}">This Month</a>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card">
+        {% if transactions %}
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.category.name }}</td>
+                        <td class="{% if transaction_type == 'income' %}income-amount{% else %}expense-amount{% endif %}">
+                            ₹{{ transaction.amount|floatformat:2 }}
+                        </td>
+                        <td>{{ transaction.note|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                {% if transaction_type == 'income' %}💰{% else %}💸{% endif %}
+            </div>
+            <h3>No {{ transaction_type }} entries found</h3>
+            <p>Start by adding your first {{ transaction_type }} transaction</p>
+            <a href="{% url 'add_'|add:transaction_type %}" class="btn {% if transaction_type == 'income' %}btn-success{% else %}btn-danger{% endif %} mt-2">
+                + Add {{ transaction_type|title }}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
